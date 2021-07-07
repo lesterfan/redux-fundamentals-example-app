@@ -1,30 +1,12 @@
 import React, { useState } from 'react'
-import { createStore } from 'redux'
-
-const initialState = {
-  tasks: [],
-}
-function reducer(state = initialState, action) {
-  switch (action.type) {
-    case 'tasks/add':
-      console.log(`Adding ${action.payload}`)
-      return {
-        tasks: [
-          ...state.tasks,
-          { desc: action.payload, complete: false, tags: [] },
-        ],
-      }
-    default:
-      return state
-  }
-}
-const reduxStore = createStore(reducer)
-reduxStore.subscribe(() => {
-  console.log('Rendering!')
-})
+import { useSelector } from 'react-redux'
+import store from './store'
 
 function App() {
   const [todoItem, setTodoItem] = useState('')
+  const allTasks = useSelector((state) => {
+    return state.tasks
+  })
   return (
     <div className="App">
       <nav>
@@ -41,17 +23,25 @@ function App() {
             e.preventDefault()
             console.log(`Submitted form with value ${todoItem}`)
             // Add this task to redux here
-            reduxStore.dispatch({ type: 'tasks/add', payload: todoItem })
+            store.dispatch({ type: 'tasks/add', payload: todoItem })
           }}
         >
-          <label>What needs to be done?</label>
           <input
             type="text"
+            placeholder="What needs to be done?"
             onChange={(e) => {
               setTodoItem(e.target.value)
             }}
-          ></input>
+          />
         </form>
+      </section>
+      <section>
+        <p>Number of tasks: {allTasks.length}</p>
+        {(function getTaskList() {
+          return allTasks.map((task) => {
+            return <li key={task.id}>{task.description}</li>
+          })
+        })()}
       </section>
     </div>
   )
