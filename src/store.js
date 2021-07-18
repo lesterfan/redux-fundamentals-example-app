@@ -1,5 +1,6 @@
 import { applyMiddleware, compose, createStore } from 'redux'
 import { sayHiOnDispatch } from './exampleAddons/enhancers'
+import { composeWithDevTools } from 'redux-devtools-extension'
 import {
   myMiddleware,
   print1,
@@ -137,8 +138,10 @@ const middleware2 = (storeAPI) => (next) => (action) => {
   return next(action)
 }
 
-const middlewareEnhancer = applyMiddleware(middleware1, middleware2)
-const store = createStore(reducer, initialState, middlewareEnhancer)
+// const middlewareEnhancer = composeWithDevTools(applyMiddleware(middleware1, middleware2))
+// const store = createStore(reducer, initialState, middlewareEnhancer)
+
+const store = createStore(reducer, initialState, composeWithDevTools())
 
 // Equivalent code (using my custom primitives):
 // const middlewareEnhancer = myApplyMiddleware(middleware1, middleware2)
